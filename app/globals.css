@@ -76,3 +76,25 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track (horizontal) */
+::-webkit-scrollbar-track {
+  background: #f3b839;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #213662;
+  border-radius: 100px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #3498db;
+  border-radius: 100px;
+}

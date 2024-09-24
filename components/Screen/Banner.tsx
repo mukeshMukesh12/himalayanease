@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -11,19 +11,57 @@ import {
 } from "@/components/ui/sheet";
 import { Phone, MapPin, MessageCircle } from "lucide-react";
 import Iframe from "../ui/iframe";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Banner() {
   const [open, setOpen] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
+  const bannerRef = useRef(null);
+  const contentRef = useRef(null);
+  const titleRef = useRef(null);
+  const textRef = useRef(null);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  useEffect(() => {
+    // GSAP Timeline for animations
+    const tl = gsap.timeline({ defaults: { duration: 1, ease: "power3.out" } });
+
+    // Animate banner image (fading in and scaling)
+    tl.fromTo(
+      bannerRef.current,
+      { opacity: 0, scale: 1.2 },
+      { opacity: 1, scale: 1, duration: 1.5 }
+    ).fromTo(
+      contentRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, stagger: 0.3 },
+      "-=1" // Start this animation a little earlier
+    );
+
+    // Animating the title and text individually
+    gsap.fromTo(
+      titleRef.current,
+      { opacity: 0, y: -50 },
+      { opacity: 1, y: 0, delay: 0.2 }
+    );
+    gsap.fromTo(
+      textRef.current,
+      { opacity: 0, x: -50 },
+      { opacity: 1, x: 0, delay: 0.4 }
+    );
+  }, []);
 
   return (
     <>
-      <div className="relative h-[500px] md:h-screen flex items-center justify-center overflow-hidden">
+      <div
+        ref={bannerRef}
+        className="relative h-[500px] md:h-screen flex items-center justify-center overflow-hidden"
+      >
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center z-0"
@@ -35,12 +73,16 @@ export default function Banner() {
 
         {/* Overlay */}
         <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
-        <header className="absolute top-0 left-0 w-full z-10">
+        <header className="absolute top-0 left-0 w-full z-50">
           <div className="container mx-auto flex justify-between items-center p-6">
             {/* Logo */}
             <div className="text-white text-2xl font-bold">
               <a href="/" className="hover:text-gray-300">
-                HimalayanEase
+                <img
+                  src="/logo.svg"
+                  alt="himalayanease logo"
+                  className="w-[80px] md:w-[auto]"
+                />
               </a>
             </div>
 
@@ -73,28 +115,28 @@ export default function Banner() {
 
             {/* Desktop Menu */}
             <nav className="hidden md:flex space-x-6">
-              <a href="/about-us" className="text-white hover:text-gray-300">
+              <a href="#about-us" className="text-white hover:text-gray-300">
                 About Us
               </a>
-              <a href="/services" className="text-white hover:text-gray-300">
+              <a href="#services" className="text-white hover:text-gray-300">
                 Our Services
               </a>
-              <a href="/contact-us" className="text-white hover:text-gray-300">
+              <a href="#contact-us" className="text-white hover:text-gray-300">
                 Contact Us
               </a>
             </nav>
 
             {/* Mobile Menu */}
             {isOpen && (
-              <nav className="absolute top-full left-0 w-full bg-gray-900 text-white md:hidden">
+              <nav className="absolute top-full left-0 w-full bg-gray-900 text-white md:hidden z-50">
                 <div className="flex flex-col space-y-2 p-4">
-                  <a href="/about-us" className="hover:text-gray-300">
+                  <a href="#about-us" className="hover:text-gray-300">
                     About Us
                   </a>
-                  <a href="/services" className="hover:text-gray-300">
+                  <a href="#services" className="hover:text-gray-300">
                     Our Services
                   </a>
-                  <a href="/contact-us" className="hover:text-gray-300">
+                  <a href="#contact-us" className="hover:text-gray-300">
                     Contact Us
                   </a>
                 </div>
@@ -103,12 +145,21 @@ export default function Banner() {
           </div>
         </header>
         {/* Content */}
-        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+        <div
+          ref={contentRef}
+          className="relative z-20 text-center px-4 sm:px-6 lg:px-8"
+        >
+          <h1
+            ref={titleRef}
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white"
+          >
             Your One-Stop Solution for All Travel, Real Estate, and Local
             Services in Dharamshala & McLeod Ganj
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-200">
+          <p
+            ref={textRef}
+            className="text-lg sm:text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-200"
+          >
             From hotel bookings and vehicle rentals to property buying and
             selling,{`we've`} got you covered.
           </p>

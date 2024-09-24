@@ -1,3 +1,5 @@
+"use client";
+import { useRef, useEffect } from "react";
 import {
   Hotel,
   CarTaxiFront,
@@ -8,8 +10,12 @@ import {
   Map,
   Home,
 } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Services() {
+  const serviceRefs = useRef<HTMLDivElement[]>([]);
   const services = [
     {
       title: "Hotel Booking",
@@ -60,7 +66,26 @@ export default function Services() {
       icon: <Home className="w-8 h-8 mb-4" />,
     },
   ];
-
+  useEffect(() => {
+    serviceRefs.current.forEach((el, index) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          delay: index * 0.2, // stagger the animation start times
+          scrollTrigger: {
+            trigger: el,
+            start: "top 80%", // Start the animation when the element is 80% in view
+            end: "bottom 60%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    });
+  }, []);
   return (
     <div className=" bg-slate-100" id="services">
       <div className="container mx-auto px-4 py-16">
@@ -72,6 +97,9 @@ export default function Services() {
           {services.map((service, index) => (
             <div
               key={index}
+              ref={(el) => {
+                if (el) serviceRefs.current[index] = el;
+              }}
               className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
             >
               <div className="flex flex-col items-center text-center">
